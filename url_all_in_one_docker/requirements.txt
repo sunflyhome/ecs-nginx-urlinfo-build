@@ -1,0 +1,5 @@
+Flask== 1.1.2
+uwsgi
+boto3
+requests_aws4auth
+markupsafe
