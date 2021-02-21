@@ -1,7 +1,7 @@
 Parameters:
     LatestAmiId:
       Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
-      Default: ‘/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id’
+      Default: '/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id'
     VPCid:
         # describe-vpcs
         Description: Your VPC ID
@@ -15,15 +15,15 @@ Parameters:
     AppImageURI:
         Description: URI of the urlinfo docker image
         Type: String
-        Default: 142269363077.dkr.ecr.us-west-2.amazonaws.com/urlinfo
-    urlupdateImageURI:
+        Default: '142269363077.dkr.ecr.us-west-2.amazonaws.com/urlinfo'
+    UrlupdateImageURI:
         Description: URI of the urlupdate docker image
         Type: String
-        Default: 142269363077.dkr.ecr.us-west-2.amazonaws.com/urlupdate
+        Default: '142269363077.dkr.ecr.us-west-2.amazonaws.com/urlupdate'
     NginxImageURI:
         Description: URI of the nginx docker image
         Type: String
-        Default: 142269363077.dkr.ecr.us-west-2.amazonaws.com/nginx
+        Default: '142269363077.dkr.ecr.us-west-2.amazonaws.com/nginx'
 Resources:
     TestAppTaskDefRole:
         Type: 'AWS::IAM::Role'
@@ -505,6 +505,7 @@ Resources:
             LaunchTemplateName: TestAppLaunchTemplate
             LaunchTemplateData:
                 InstanceType: t2.micro
+                KeyName: testrepo
                 IamInstanceProfile:
                     Arn: !GetAtt TestAppInstanceProfile.Arn
                 ImageId: !Ref LatestAmiId
@@ -560,7 +561,7 @@ Resources:
         Properties:
             ContainerDefinitions:
                   - Name: TestAppContainer
-                    Image: !Ref urlupdateImageURI
+                    Image: !Ref UrlupdateImageURI
                     Memory: 512
                     CPU: 512
                   - Name: NginxContainer
@@ -621,7 +622,7 @@ Resources:
                 - Field: path-pattern
                   PathPatternConfig:
                         Values:
-                            - "/urlinfo"
+                            - "/urlinfo/*"
             Priority: 1
             ListenerArn: !Ref TestAppLBListener
     TesturlupdateListenerRule:
@@ -634,7 +635,7 @@ Resources:
                 - Field: path-pattern
                   PathPatternConfig:
                         Values:
-                            - "/urlupdate"
+                            - "/urlupdate/*"
             Priority: 2
             ListenerArn: !Ref TestAppLBListener
     TestAppService:
