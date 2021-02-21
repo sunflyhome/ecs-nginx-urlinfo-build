@@ -1,11 +1,9 @@
 from flask import Flask, render_template
 import boto3
-import re
 import requests
 from requests_aws4auth import AWS4Auth
-import os
 import json
-import hashlib
+
 
 from markupsafe import escape
 url_all_in_one = Flask(__name__)
@@ -42,9 +40,9 @@ def urlinfo_page(subpath):
     result = json.loads(requests.get(url, headers=headers, data=json.dumps(query)).text) 
     # Return True if url is listed as malware from ElasticSearch 
     if result['hits']['total']['value'] > 0:
-        return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
+        return json.dumps({'Found':True}), 200, {'ContentType':'application/json'}
     else:
-        return json.dumps({'success':False}), 200, {'ContentType':'application/json'}
+        return json.dumps({'Found':False}), 200, {'ContentType':'application/json'}
 @url_all_in_one .route('/urlupdate/<path:subpath>', methods=['GET'])
 
 def urlupdate_page(subpath):
