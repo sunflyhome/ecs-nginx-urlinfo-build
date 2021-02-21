@@ -3,24 +3,24 @@ Parameters:
         # describe-vpcs
         Description: Your VPC ID
         Type: String
-        Default: <your-vpc-id>
+        Default: vpc-7fd91606
     Subnets:
         # describe-subnets
         Description: IDs of all subnets in your vpc
         Type: List<AWS::EC2::Subnet::Id>
-        Default: <your-subnet-1>, <your-subnet-2>...
+        Default: subnet-bc2d22da, subnet-cdb39c85
     AppImageURI:
-        Description: URI of the app1 docker image
+        Description: URI of the urlinfo docker image
         Type: String
-        Default: <app1-image-uri>
-    App2ImageURI:
-        Description: URI of the app2 docker image
+        Default: 142269363077.dkr.ecr.us-west-2.amazonaws.com/urlinfo
+    urlupdateImageURI:
+        Description: URI of the urlupdate docker image
         Type: String
-        Default: <app2-image-uri>
+        Default: 142269363077.dkr.ecr.us-west-2.amazonaws.com/urlupdate
     NginxImageURI:
         Description: URI of the nginx docker image
         Type: String
-        Default: <nginx-image-uri>
+        Default: 142269363077.dkr.ecr.us-west-2.amazonaws.com/nginx
 Resources:
     TestAppTaskDefRole:
         Type: 'AWS::IAM::Role'
@@ -101,6 +101,7 @@ Resources:
                             - elasticloadbalancing:DescribeRules
                             - elasticloadbalancing:DescribeTargetGroups
                             - ecs:*
+                            - es:*
                             - events:DescribeRule
                             - events:DeleteRule
                             - events:ListRuleNamesByTarget
@@ -503,7 +504,7 @@ Resources:
                 InstanceType: t2.micro
                 IamInstanceProfile:
                     Arn: !GetAtt TestAppInstanceProfile.Arn
-                ImageId: ami-01160aa0f76932771
+                ImageId: ami-0e999cbd62129e3b1
                 SecurityGroupIds:
                     - !GetAtt TestAppSecGrp.GroupId
                 UserData: 
@@ -551,12 +552,12 @@ Resources:
             NetworkMode: bridge
             RequiresCompatibilities:
                 - EC2
-    TestApp2TaskDefinition:
+    TesturlupdateTaskDefinition:
         Type: AWS::ECS::TaskDefinition
         Properties:
             ContainerDefinitions:
                   - Name: TestAppContainer
-                    Image: !Ref App2ImageURI
+                    Image: !Ref urlupdateImageURI
                     Memory: 512
                     CPU: 512
                   - Name: NginxContainer
@@ -571,7 +572,7 @@ Resources:
                     - TestAppContainer
             ExecutionRoleArn: !GetAtt TestAppTaskDefRole.Arn
             TaskRoleArn: !GetAtt TestAppTaskDefRole.Arn
-            Family: TestApp2TaskDef
+            Family: TesturlupdateTaskDef
             NetworkMode: bridge
             RequiresCompatibilities:
                 - EC2
@@ -581,17 +582,17 @@ Resources:
             Name: TestAppServiceTG
             Protocol: HTTP
             VpcId: !Ref VPCid
-            HealthCheckPath: /app1/
+            HealthCheckPath: /urlinfo/
             Protocol: HTTP
             Port: 80
             TargetType: instance
-    TestApp2TargetGroup:
+    TesturlupdateTargetGroup:
         Type: AWS::ElasticLoadBalancingV2::TargetGroup
         Properties:
-            Name: TestApp2ServiceTG
+            Name: TesturlupdateServiceTG
             Protocol: HTTP
             VpcId: !Ref VPCid
-            HealthCheckPath: /app2/
+            HealthCheckPath: /urlupdate/
             Protocol: HTTP
             Port: 80
             TargetType: instance
@@ -602,7 +603,7 @@ Resources:
                 - Type: fixed-response
                   FixedResponseConfig:
                         ContentType: "text/plain"
-                        MessageBody: "Invalid URL path. Please use '/app1' or '/app2'"
+                        MessageBody: "Invalid URL path. Please use '/urlinfo' or '/urlupdate'"
                         StatusCode: "404"
             LoadBalancerArn: !Ref TestAppLoadBalancer
             Port: 80
@@ -617,20 +618,20 @@ Resources:
                 - Field: path-pattern
                   PathPatternConfig:
                         Values:
-                            - "/app1"
+                            - "/urlinfo"
             Priority: 1
             ListenerArn: !Ref TestAppLBListener
-    TestApp2ListenerRule:
+    TesturlupdateListenerRule:
         Type: AWS::ElasticLoadBalancingV2::ListenerRule
         Properties:
             Actions:
                 - Type: forward
-                  TargetGroupArn: !Ref TestApp2TargetGroup                    
+                  TargetGroupArn: !Ref TesturlupdateTargetGroup                    
             Conditions:
                 - Field: path-pattern
                   PathPatternConfig:
                         Values:
-                            - "/app2"
+                            - "/urlupdate"
             Priority: 2
             ListenerArn: !Ref TestAppLBListener
     TestAppService:
@@ -647,17 +648,17 @@ Resources:
                 - ContainerName: NginxContainer
                   ContainerPort: 80
                   TargetGroupArn: !Ref TestAppTargetGroup
-    TestApp2Service:
+    TesturlupdateService:
         Type: AWS::ECS::Service
-        DependsOn: TestApp2ListenerRule
+        DependsOn: TesturlupdateListenerRule
         Properties:
-            ServiceName: TestApp2Service
+            ServiceName: TesturlupdateService
             Cluster: !Ref TestAppCluster
             DesiredCount: 2
             LaunchType: EC2
-            TaskDefinition: !Ref TestApp2TaskDefinition
+            TaskDefinition: !Ref TesturlupdateTaskDefinition
             SchedulingStrategy: REPLICA
             LoadBalancers:
                 - ContainerName: NginxContainer
                   ContainerPort: 80
-                  TargetGroupArn: !Ref TestApp2TargetGroup
+                  TargetGroupArn: !Ref TesturlupdateTargetGroup
