@@ -1,4 +1,7 @@
 Parameters:
+    LatestAmiId:
+      Type : 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+      Default: ‘/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id’
     VPCid:
         # describe-vpcs
         Description: Your VPC ID
@@ -504,7 +507,7 @@ Resources:
                 InstanceType: t2.micro
                 IamInstanceProfile:
                     Arn: !GetAtt TestAppInstanceProfile.Arn
-                ImageId: ami-0e999cbd62129e3b1
+                ImageId: !Ref LatestAmiId
                 SecurityGroupIds:
                     - !GetAtt TestAppSecGrp.GroupId
                 UserData: 
