@@ -18,8 +18,7 @@ RUN cd /usr/bin && ln -s python3 python
 RUN python -m pip install -r requirements.txt
 
 #Expose port 8000 of the container to the outside
-EXPOSE 8000
+EXPOSE 8080
 #Run uwsgi with the configuration in the .ini file
-CMD ["uwsgi","--ini","app.ini", \
-                   "--protocol", "uwsgi"]
+CMD ["uwsgi","--ini","app.ini" ]
 

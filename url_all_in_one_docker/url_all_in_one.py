@@ -22,7 +22,7 @@ def urlinfo_page(subpath):
     credentials = boto3.Session().get_credentials()
     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
     
-    host = 'https://vpc-malware-url-repo-2g5a7onmridquyi3hcxkw7kkwq.us-west-2.es.amazonaws.com:9200'
+    host = 'https://vpc-malware-url-repo-2g5a7onmridquyi3hcxkw7kkwq.us-west-2.es.amazonaws.com'
     index = 'lambda-url-index'
     type = 'lambda-type'
     url = host + '/' + index + '/_search'
@@ -53,7 +53,7 @@ def urlupdate_page(subpath):
     credentials = boto3.Session().get_credentials()
     awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
     
-    host = 'https://vpc-malware-url-repo-2g5a7onmridquyi3hcxkw7kkwq.us-west-2.es.amazonaws.com:9200'
+    host = 'https://vpc-malware-url-repo-2g5a7onmridquyi3hcxkw7kkwq.us-west-2.es.amazonaws.com'
     index = 'lambda-url-index'
     type = 'lambda-type'
     url = host + '/' + index + '/' + type
@@ -67,7 +67,3 @@ def urlupdate_page(subpath):
         return json.dumps({'Added':True}), 200, {'ContentType':'application/json'}
     else:
         return json.dumps({'Added':False}), 200, {'ContentType':'application/json'}
-
-
-    
-    

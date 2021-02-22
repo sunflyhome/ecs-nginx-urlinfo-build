@@ -1,4 +1,0 @@
-from urlupdate import urlupdate as application
-
-if __name__ == "__main__":
-    application.run()
