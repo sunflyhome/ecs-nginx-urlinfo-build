@@ -58,7 +58,7 @@ Added auth for GET request
 
 == Reference ==
 
-Local Test:
+Local Test (vpc endpoint uses 9002 from local dev host to AWS ec2 instance via port-forward ):
 https://and1zero.github.io/tech/2019/03/12/connecting-to-aws-elasticsearch-vpc-locally/
 
 Create docker container on AWS:
