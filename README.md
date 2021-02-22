@@ -1,8 +1,9 @@
-== Test Process ==
+## Test Process
 
 * Query url ( ayy URL in urls.test.db):
 
 http://urlchecker-16047262.us-west-2.elb.amazonaws.com/urlinfo/1/<url_link>
+
 http://urlchecker-16047262.us-west-2.elb.amazonaws.com/urlinfo/1/http://omega.az/IRS/vGuy-lNs5_lcfNoI-xFr/
 
 Return {"Found": true}
@@ -22,7 +23,7 @@ http://urlchecker-16047262.us-west-2.elb.amazonaws.com/
 
 Return Welcome
 
-== Service Description ==
+## Service Description
 
 Single url_all_in_one.py talks to AWS Elastic Search for indexed text search. Current search pattern in the code set as exact match.
 
@@ -30,7 +31,7 @@ AWS Elastic Search service (AES) is currently hosted in AWS based on Apache Luce
 
 url_all_in_one.py is built into container with Flask and uWsgi on Centos 7
 
-== Infra Description ==
+## Infra Description
 
 The container is currently pushed to AWS ECS service into Cluster:  URL-INFO-CLUSTER 
 
@@ -44,7 +45,7 @@ Container service, based on the path (either urlinfo or urlupdate), send request
 
 Client -> ELB(port 80) -> Autoscalling group ( 2 instances) -> Target group ( ecs-URL-IN-url-check-sev port 8080)
 
-== Future Improment ==
+## Future Improment
 
 urlupdate should support POST with BULK file.
 
@@ -56,12 +57,12 @@ Migrate from http to https with cerificate created from ACM.
 
 Added auth for GET request
 
-== Reference ==
+## Reference
 
-Local Test (vpc endpoint uses 9002 from local dev host to AWS ec2 instance via port-forward ):
+* Local Test (vpc endpoint uses 9002 from local dev host to AWS ec2 instance via port-forward ):
 https://and1zero.github.io/tech/2019/03/12/connecting-to-aws-elasticsearch-vpc-locally/
 
-Create docker container on AWS:
+* Create docker container on AWS:
 https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_AWSCLI_EC2.html
 
 
