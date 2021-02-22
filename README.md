@@ -56,6 +56,13 @@ Migrate from http to https with cerificate created from ACM.
 
 Added auth for GET request
 
+== Reference ==
+
+Local Test:
+https://and1zero.github.io/tech/2019/03/12/connecting-to-aws-elasticsearch-vpc-locally/
+
+Create docker container on AWS:
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_AWSCLI_EC2.html
 
 
 
